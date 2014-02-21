@@ -33,7 +33,7 @@ public class Util
 	 */
 	public static final int wrap(int value, int min, int max)
 	{
-		int dif = max - min;
+		int dif = max - min + 1;
 		while(value < min)
 		{
 			value += dif;

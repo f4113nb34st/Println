@@ -45,6 +45,7 @@ public class OneDInterpolationWeb extends SimpleApplet implements KeyListener
 	@Override 
 	public void keyPressed(KeyEvent e)
 	{
+		setDirty();
 		switch(e.getKeyCode())
 		{
 			case KeyEvent.VK_SPACE://if space, go to next interpolation type
@@ -111,7 +112,6 @@ public class OneDInterpolationWeb extends SimpleApplet implements KeyListener
 		}
 		tension = Math.round(tension * 10) / 10D;
 		bias = Math.round(bias * 10) / 10D;
-		setDirty();
 	}
 
 	@Override
