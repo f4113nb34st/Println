@@ -55,15 +55,15 @@ public class InterpNoise implements NoiseFunction
 		{
 			for(int x = noise.minX; x <= noise.maxX; x++)
 			{
-				int bottomX = (int)(x / periodX);
+				int bottomX = (int)((x - noise.minX) / periodX);
 				int topX = bottomX + 1;
-				double blendX = (x % periodX) / (double)periodX;
+				double blendX = ((x - noise.minX) % periodX) / (double)periodX;
 				
 				for(int y = noise.minY; y <= noise.maxY; y++)
 				{
-					int bottomY = (int)(y / periodY);
+					int bottomY = (int)((y - noise.minY) / periodY);
 					int topY = bottomY + 1;
-					double blendY = (y % periodY) / (double)periodY;
+					double blendY = ((y - noise.minY) % periodY) / (double)periodY;
 					
 					double xBotInterp = interp.interpolate(baseNoise.get(bottomX, bottomY), baseNoise.get(bottomX, topY), blendY);
 					double xTopInterp = interp.interpolate(baseNoise.get(topX, bottomY), baseNoise.get(topX, topY), blendY);
@@ -75,19 +75,19 @@ public class InterpNoise implements NoiseFunction
 		{
 			for(int x = noise.minX; x <= noise.maxX; x++)
 			{
-				int bottomX = (int)(x / periodX);
+				int bottomX = (int)((x - noise.minX) / periodX);
 				int topX = bottomX + 1;
 				int pastX = bottomX - 1;
 				int futureX = topX + 1;
-				double blendX = (x % periodX) / (double)periodX;
+				double blendX = ((x - noise.minX) % periodX) / (double)periodX;
 				
 				for(int y = noise.minY; y <= noise.maxY; y++)
 				{
-					int bottomY = (int)(y / periodY);
+					int bottomY = (int)((y - noise.minY) / periodY);
 					int topY = bottomY + 1;
 					int pastY = bottomY - 1;
 					int futureY = topY + 1;
-					double blendY = (y % periodY) / (double)periodY;
+					double blendY = ((y - noise.minY) % periodY) / (double)periodY;
 					
 					double xPastInterp = interp.interpolate(baseNoise.get(pastX, pastY), baseNoise.get(pastX, bottomY), baseNoise.get(pastX, topY), baseNoise.get(pastX, futureY), blendY);
 					double xBotInterp = interp.interpolate(baseNoise.get(bottomX, pastY), baseNoise.get(bottomX, bottomY), baseNoise.get(bottomX, topY), baseNoise.get(bottomX, futureY), blendY);
