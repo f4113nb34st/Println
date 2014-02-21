@@ -20,7 +20,7 @@ public abstract class SimpleCore
 	 */
 	private boolean running;
 	/**
-	 * The JFrame of the game.
+	 * The JFrame of the program.
 	 */
 	public SimpleFrame frame;
 	
@@ -36,10 +36,12 @@ public abstract class SimpleCore
 	private boolean fading = false;
 	private long fadeStart;
 	
+	private String title;
+	
 	public SimpleCore(String title, int width, int height)
 	{
+		this.title = title;
 		frame = new SimpleFrame();
-		frame.setTitle(title);
 		
 		Rectangle r = frame.getGraphicsConfiguration().getBounds();
 		
@@ -109,15 +111,14 @@ public abstract class SimpleCore
 		update(buffer, g2);
 		handleScreenShot(buffer, g2);
 		
-		g2.setColor(Color.BLACK);
-		g2.drawString((int)FrameRate.getFrameRate() + "", 2, 14);
-		
 		g2.dispose();
 		
 		swapBuffers();
 		
 		frame.repaint();
 		FrameRate.poll();
+		
+		frame.setTitle(title + ": " + (int)FrameRate.getFrameRate());
 	}
 	
 	private void handleScreenShot(BufferedImage image, Graphics2D g2)
