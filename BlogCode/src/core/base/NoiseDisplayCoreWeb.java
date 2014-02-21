@@ -19,8 +19,8 @@ import noise.NoiseArray;
 @SuppressWarnings("serial")
 public abstract class NoiseDisplayCoreWeb extends SimpleApplet implements KeyListener
 {
-	public static final int WIDTH = 512; //try changing me!
-	public static final int HEIGHT = 512; //try changing me!
+	public static final int WIDTH = 350; //try changing me!
+	public static final int HEIGHT = 350; //try changing me!
 	public static final NoiseArray noise = new NoiseArray(WIDTH, HEIGHT);
 			
 	/**
