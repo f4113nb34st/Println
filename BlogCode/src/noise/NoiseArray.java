@@ -46,6 +46,10 @@ public class NoiseArray
 		minY = 0;
 		maxX = w - 1;
 		maxY = h - 1;
+		if((maxX - minX) >= noise.length || (maxY - minY) >= noise[0].length)
+		{
+			noise = new double[maxX - minX + 1][maxY - minY + 1];
+		}
 	}
 	
 	public int getWidth()
