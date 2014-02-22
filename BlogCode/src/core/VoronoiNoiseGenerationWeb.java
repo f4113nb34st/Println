@@ -94,7 +94,9 @@ public class VoronoiNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Ke
 	@Override
 	public void drawInfo(Graphics2D g2)
 	{
-		drawString("Period X: " + periodX, 100, g2);
-		drawString("Period Y: " + periodY, 100, g2);
+		drawString("Dis Func: " + disFunc.name(), 175, g2);
+		drawString("Com Func: " + comFunc.name(), 175, g2);
+		drawString("Period X: " + periodX, 175, g2);
+		drawString("Period Y: " + periodY, 175, g2);
 	}
 }
