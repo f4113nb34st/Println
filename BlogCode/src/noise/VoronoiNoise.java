@@ -44,9 +44,15 @@ public class VoronoiNoise implements NoiseFunction
 					minDis[i] = Double.POSITIVE_INFINITY;
 				}
 				
-				for(int i = -1; i <= 1; i++)//check cell and neighbors
+				int checkDis = 1;
+				if(disFunc == DistanceFunction.Minkowski0_5 || minDis.length > 2)
 				{
-					for(int j = -1; j <= 1; j++)//check cell and neighbors
+					checkDis = 2;
+				}
+				
+				for(int i = -checkDis; i <= checkDis; i++)//check cell and neighbors
+				{
+					for(int j = -checkDis; j <= checkDis; j++)//check cell and neighbors
 					{
 						double[] dot = dots[Util.wrap(cellX + i, 0, dots.length - 1)][Util.wrap(cellY + j, 0, dots[0].length - 1)];
 						double disTo = disFunc.distanceFunc(fracX, fracY, dot[0] + i, dot[1] + j);
