@@ -34,6 +34,9 @@ public class Util
 	public static final int wrap(int value, int min, int max)
 	{
 		int dif = max - min + 1;
+		
+		//naive implementation
+		/*
 		while(value < min)
 		{
 			value += dif;
@@ -42,6 +45,15 @@ public class Util
 		{
 			value -= dif;
 		}
+		*/
+		
+		//fast implementation
+		value -= min;
+		if(value < 0)//if less than 0 (aka % won't work)
+		{
+			value += ((-value / dif) + 1) * dif;//find exact amount needed to bring over 0
+		}
+		value %= dif;
 		return value;
 	}
 }
