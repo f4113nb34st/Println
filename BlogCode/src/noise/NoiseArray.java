@@ -69,6 +69,11 @@ public class NoiseArray
 		noise[x][y] = (value * amplitude) + offset;
 	}
 	
+	public void setRelative(int x, int y, double value)
+	{
+		set(x + minX, y + minY, value);
+	}
+	
 	public double get(int x, int y)
 	{
 		x = fix(x, minX, maxX, wrapX);
