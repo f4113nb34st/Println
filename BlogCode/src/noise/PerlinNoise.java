@@ -1,6 +1,5 @@
 package noise;
 
-import java.util.Random;
 import util.FastMath;
 import util.Interpolation;
 
@@ -13,8 +12,6 @@ import util.Interpolation;
  */
 public class PerlinNoise implements NoiseFunction
 {
-	private static final Random rand = new Random();
-	
 	/**
 	 * Generates a Perlin noise array.
 	 * @param width The width of the array.
@@ -40,48 +37,46 @@ public class PerlinNoise implements NoiseFunction
 	 */
 	public static final void fill_perlin_noise_array(NoiseArray noise, long seed, int periodX, int periodY)
 	{
-		rand.setSeed(seed);
-		
-		double[][][] gradients = getGradientMap((int)Math.ceil(noise.getWidth() / (double)periodX), (int)Math.ceil(noise.getHeight() / (double)periodY));
+		double[][][] gradients = getGradientMap((int)Math.ceil(noise.getWidth() / (double)periodX), (int)Math.ceil(noise.getHeight() / (double)periodY), seed);
 		
 		for(int x = 0; x < noise.getWidth(); x++)
 		{
+			int i = x / periodX;
+			double fracX = (x % (double)periodX) / periodX;
+			int botX = i;
+			int topX = (i + 1) % gradients.length;
+			
 			for(int y = 0; y < noise.getHeight(); y++)
 			{
-				int i = x / periodX;
 				int j = y / periodY;
-				double fracX = (x % (double)periodX) / periodX;
 				double fracY = (y % (double)periodY) / periodY;
-				
-				int botX = i;
-				int topX = (i + 1) % gradients.length;
 				int botY = j;
 				int topY = (j + 1) % gradients[0].length;
 				
 				double valBXBY = dotProduct(gradients[botX][botY], fracX, fracY);
-				double valBXTY = dotProduct(gradients[topX][botY], fracX - 1D, fracY);
-				double valTXBY = dotProduct(gradients[botX][topY], fracX, fracY - 1D);
+				double valTXBY = dotProduct(gradients[topX][botY], fracX - 1D, fracY);
+				double valBXTY = dotProduct(gradients[botX][topY], fracX, fracY - 1D);
 				double valTXTY = dotProduct(gradients[topX][topY], fracX - 1D, fracY - 1D);
 				
-				fracX = fade(fracX);
-				fracY = fade(fracY);
+				double newFracX = fade(fracX);
+				double newFracY = fade(fracY);
 				
-				double xBotInterp = Interpolation.LINEAR.interpolate(valBXBY, valBXTY, fracX);
-				double xTopInterp = Interpolation.LINEAR.interpolate(valTXBY, valTXTY, fracX);
+				double yBotInterp = Interpolation.LINEAR.interpolate(valBXBY, valTXBY, newFracX);
+				double yTopInterp = Interpolation.LINEAR.interpolate(valBXTY, valTXTY, newFracX);
 				
-				noise.set(x + noise.minX, y + noise.minY, Interpolation.LINEAR.interpolate(xBotInterp, xTopInterp, fracY));
+				noise.setRelative(x, y, Interpolation.LINEAR.interpolate(yBotInterp, yTopInterp, newFracY));
 			}
 		}
 	}
 	
-	private static final double[][][] getGradientMap(int width, int height)
+	private static final double[][][] getGradientMap(int width, int height, long seed)
 	{
 		double[][][] gradients = new double[width][height][2];
 		for(int i = 0; i < gradients.length; i++)
 		{
 			for(int j = 0; j < gradients[0].length; j++)
 			{
-				double angle = rand.nextDouble() * Math.PI * 2;
+				double angle = BasicNoise.noise_gen(i, j, seed) * Math.PI * 2;
 				gradients[i][j][0] = FastMath.cos(angle);
 				gradients[i][j][1] = FastMath.sin(angle);
 			}
