@@ -105,9 +105,7 @@ public class VoronoiNoiseGeneration extends NoiseDisplayCore implements KeyListe
 	@Override
 	public void regenNoise(long seed)
 	{
-		long time = System.currentTimeMillis();
 		VoronoiNoise.fill_voronoi_noise_array(noise, seed, periodX, periodY, disFunc, comFunc);
-		System.out.println(System.currentTimeMillis() - time);
 	}
 
 	@Override
