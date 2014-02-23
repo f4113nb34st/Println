@@ -60,10 +60,19 @@ public class VoronoiNoise implements NoiseFunction
 					}
 				}
 				
+				if(disFunc == DistanceFunction.Euclid)
+				{
+					for(int i = 0; i < minDis.length; i++)
+					{
+						minDis[i] = Math.sqrt(minDis[i]);
+					}
+				}
 				double value = comFunc.combineFunc(minDis);
 				noise.set(x + noise.minX, y + noise.minY, value);
 			}
 		}
+		
+		noise.normalize();
 	}
 	
 	/**
