@@ -8,7 +8,7 @@ package noise.voronoi;
  */
 public enum DistanceFunction
 {
-	Euclid, Manhattan, Chebyshev, Minkowski0_5;
+	Euclid, EuclidSq, Manhattan, Chebyshev, Minkowski0_5;
 	
 	/**
 	 * Returns the distance between the given points.
@@ -19,7 +19,8 @@ public enum DistanceFunction
 		switch(this)
 		{
 			default://default is also Euclid
-				return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+			case EuclidSq:
+				return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);//returns the square distance, sqrt's are calculated later.
 			case Manhattan:	
 				return Math.abs(x1 - x2) + Math.abs(y1 - y2);
 			case Chebyshev:	
