@@ -196,7 +196,7 @@ public final class AdvancedVoronoiNoise
 	private void setAndProp(Location loc)
 	{
 		//get value for the current point
-		double value = loc.src.personalDistanceTo(loc.point.x, loc.point.y, disFunc, pixels.length, pixels[0].length);
+		double value = loc.src.personalDistanceTo(loc.point.x, loc.point.y, disFunc);
 		if(insert(pixels[loc.point.x][loc.point.y], value))//if one of the least, tell neighbors
 		{
 			for(int i = -1; i <= 1; i++)
