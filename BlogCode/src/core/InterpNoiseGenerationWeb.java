@@ -2,7 +2,6 @@ package core;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import core.base.NoiseDisplayCoreWeb;
 import util.Interpolation;
 import noise.InterpNoise;
@@ -15,10 +14,13 @@ import noise.InterpNoise;
  *
  */
 @SuppressWarnings("serial")
-public class InterpNoiseGenerationWeb extends NoiseDisplayCoreWeb implements KeyListener
+public class InterpNoiseGenerationWeb extends NoiseDisplayCoreWeb
 {		
+	//current inerpolation function
 	private Interpolation inter = Interpolation.LINEAR;
+	//periodX
 	private int periodX = 5;
+	//periodY
 	private int periodY = 5;
 	
 	@Override 
@@ -34,7 +36,7 @@ public class InterpNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Key
 				inter = Interpolation.values()[index];
 				return true;
 			}
-			case KeyEvent.VK_Q:
+			case KeyEvent.VK_Q://if Q, increase periodX
 			{
 				periodX++;
 				if(periodX > WIDTH)
@@ -43,7 +45,7 @@ public class InterpNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Key
 				}
 				return true;
 			}
-			case KeyEvent.VK_E:
+			case KeyEvent.VK_E://if E, decrease periodX
 			{
 				periodX--;
 				if(periodX < 1)
@@ -52,7 +54,7 @@ public class InterpNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Key
 				}
 				return true;
 			}
-			case KeyEvent.VK_A:
+			case KeyEvent.VK_A://if A, increase periodY
 			{
 				periodY++;
 				if(periodY > HEIGHT)
@@ -61,7 +63,7 @@ public class InterpNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Key
 				}
 				return true;
 			}
-			case KeyEvent.VK_D:
+			case KeyEvent.VK_D://if D, decrease periodY
 			{
 				periodY--;
 				if(periodY < 1)
@@ -78,12 +80,14 @@ public class InterpNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Key
 	@Override
 	public void regenNoise(long seed)
 	{
+		//fill array
 		InterpNoise.fill_interp_noise_array(noise, null, seed, inter, periodX, periodY);
 	}
 
 	@Override
 	public void drawInfo(Graphics2D g2)
 	{
+		//display infos
 		drawString(inter.getName(), 100, g2);
 		drawString("Period X: " + periodX, 100, g2);
 		drawString("Period Y: " + periodY, 100, g2);

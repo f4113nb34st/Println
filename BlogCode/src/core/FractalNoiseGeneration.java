@@ -15,26 +15,32 @@ import noise.InterpNoise;
  * @author F4113nb34st
  *
  */
-public class FractalNoiseGeneration extends NoiseDisplayCore implements KeyListener
+public class FractalNoiseGeneration extends NoiseDisplayCore
 {
 	public static void main(String[] args)
 	{
 		try
 		{
+			//general init stuff
 			FractalNoiseGeneration main = new FractalNoiseGeneration("Fractal Noise");
 			main.init();
 			main.renderLoop();
-		}catch(Exception ex)
+		}catch(Exception ex)//catch any exceptions
 		{
 			ex.printStackTrace();
 		}
 	}
-			
+	
+	//the current interpolation function to use
 	private Interpolation inter = Interpolation.LINEAR;
+	//the fine octave
 	private int fineOctave = 0;
+	//the broad octave
 	private int broadOctave = 8;
+	//the persistence of the octaves
 	private double persistence = .5;
 	
+	//pass title to SimpleCore
 	public FractalNoiseGeneration(String title)
 	{
 		super(title);
@@ -58,7 +64,7 @@ public class FractalNoiseGeneration extends NoiseDisplayCore implements KeyListe
 				takeScreenShot();
 				break;
 			}
-			case KeyEvent.VK_Q:
+			case KeyEvent.VK_Q://if Q increase fineOctave
 			{
 				if(fineOctave < broadOctave)
 				{
@@ -67,7 +73,7 @@ public class FractalNoiseGeneration extends NoiseDisplayCore implements KeyListe
 				}
 				break;
 			}
-			case KeyEvent.VK_E:
+			case KeyEvent.VK_E://if E decrease fineOctave
 			{
 				if(fineOctave > 0)
 				{
@@ -76,7 +82,7 @@ public class FractalNoiseGeneration extends NoiseDisplayCore implements KeyListe
 				}
 				break;
 			}
-			case KeyEvent.VK_A:
+			case KeyEvent.VK_A://if A increase broadOctave
 			{
 				if((1 << broadOctave) < Math.min(WIDTH, HEIGHT))
 				{
@@ -85,7 +91,7 @@ public class FractalNoiseGeneration extends NoiseDisplayCore implements KeyListe
 				}
 				break;
 			}
-			case KeyEvent.VK_D:
+			case KeyEvent.VK_D://if D decrease broadOctave
 			{
 				if(broadOctave > fineOctave)
 				{
@@ -94,7 +100,7 @@ public class FractalNoiseGeneration extends NoiseDisplayCore implements KeyListe
 				}
 				break;
 			}
-			case KeyEvent.VK_Z:
+			case KeyEvent.VK_Z://if Z increase persistence
 			{
 				if(persistence < 2)
 				{
@@ -103,7 +109,7 @@ public class FractalNoiseGeneration extends NoiseDisplayCore implements KeyListe
 				}
 				break;
 			}
-			case KeyEvent.VK_C:
+			case KeyEvent.VK_C://if C decrease persistence
 			{
 				if(persistence > 0)
 				{
@@ -113,6 +119,7 @@ public class FractalNoiseGeneration extends NoiseDisplayCore implements KeyListe
 				break;
 			}
 		}
+		//round persistence
 		persistence = Math.round(persistence * 10) / 10D;
 		
 		return false;
@@ -121,12 +128,14 @@ public class FractalNoiseGeneration extends NoiseDisplayCore implements KeyListe
 	@Override
 	public void regenNoise(long seed)
 	{
+		//fill array
 		FractalNoise.fill_fractal_noise_array(noise, seed, InterpNoise.getAsFunction(inter), fineOctave, broadOctave, persistence);
 	}
 
 	@Override
 	public void drawInfo(Graphics2D g2)
 	{
+		//display infos
 		drawString(inter.getName(), 125, g2);
 		drawString("Fine Octave: " + fineOctave, 125, g2);
 		drawString("Broad Octave: " + broadOctave, 125, g2);

@@ -2,7 +2,6 @@ package core;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import core.base.NoiseDisplayCoreWeb;
 import noise.PerlinNoise;
 
@@ -14,9 +13,11 @@ import noise.PerlinNoise;
  *
  */
 @SuppressWarnings("serial")
-public class PerlinNoiseGenerationWeb extends NoiseDisplayCoreWeb implements KeyListener
+public class PerlinNoiseGenerationWeb extends NoiseDisplayCoreWeb
 {
+	//the x period
 	private int periodX = 5;
+	//the y period
 	private int periodY = 5;
 	
 	@Override 
@@ -24,7 +25,7 @@ public class PerlinNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Key
 	{
 		switch(code)
 		{
-			case KeyEvent.VK_Q:
+			case KeyEvent.VK_Q://if Q, increase x period
 			{
 				periodX++;
 				if(periodX > WIDTH)
@@ -33,7 +34,7 @@ public class PerlinNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Key
 				}
 				return true;
 			}
-			case KeyEvent.VK_E:
+			case KeyEvent.VK_E://if E, decrease x period
 			{
 				periodX--;
 				if(periodX < 1)
@@ -42,7 +43,7 @@ public class PerlinNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Key
 				}
 				return true;
 			}
-			case KeyEvent.VK_A:
+			case KeyEvent.VK_A://if A, increase y period
 			{
 				periodY++;
 				if(periodY > HEIGHT)
@@ -51,7 +52,7 @@ public class PerlinNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Key
 				}
 				return true;
 			}
-			case KeyEvent.VK_D:
+			case KeyEvent.VK_D://if D, decrease y period
 			{
 				periodY--;
 				if(periodY < 1)
@@ -68,12 +69,14 @@ public class PerlinNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Key
 	@Override
 	public void regenNoise(long seed)
 	{
+		//fill array
 		PerlinNoise.fill_perlin_noise_array(noise, seed, periodX, periodY);
 	}
 
 	@Override
 	public void drawInfo(Graphics2D g2)
 	{
+		//display infos
 		drawString("Period X: " + periodX, 100, g2);
 		drawString("Period Y: " + periodY, 100, g2);
 	}

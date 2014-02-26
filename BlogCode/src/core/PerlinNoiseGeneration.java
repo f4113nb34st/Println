@@ -2,7 +2,6 @@ package core;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import core.base.NoiseDisplayCore;
 import noise.PerlinNoise;
 
@@ -13,24 +12,28 @@ import noise.PerlinNoise;
  * @author F4113nb34st
  *
  */
-public class PerlinNoiseGeneration extends NoiseDisplayCore implements KeyListener
+public class PerlinNoiseGeneration extends NoiseDisplayCore
 {
 	public static void main(String[] args)
 	{
 		try
 		{
+			//general init stuff
 			PerlinNoiseGeneration main = new PerlinNoiseGeneration("Perlin Noise");
 			main.init();
 			main.renderLoop();
-		}catch(Exception ex)
+		}catch(Exception ex)//catch all exceptions
 		{
 			ex.printStackTrace();
 		}
 	}
 
+	//the x period
 	private int periodX = 5;
+	//the y period
 	private int periodY = 5;
 	
+	//pass the title
 	public PerlinNoiseGeneration(String title)
 	{
 		super(title);
@@ -41,7 +44,7 @@ public class PerlinNoiseGeneration extends NoiseDisplayCore implements KeyListen
 	{
 		switch(code)
 		{
-			case KeyEvent.VK_Q:
+			case KeyEvent.VK_Q://if Q, increase x period
 			{
 				periodX++;
 				if(periodX > WIDTH)
@@ -50,7 +53,7 @@ public class PerlinNoiseGeneration extends NoiseDisplayCore implements KeyListen
 				}
 				return true;
 			}
-			case KeyEvent.VK_E:
+			case KeyEvent.VK_E://if E, decrease x period
 			{
 				periodX--;
 				if(periodX < 1)
@@ -59,7 +62,7 @@ public class PerlinNoiseGeneration extends NoiseDisplayCore implements KeyListen
 				}
 				return true;
 			}
-			case KeyEvent.VK_A:
+			case KeyEvent.VK_A://if A, increase y period
 			{
 				periodY++;
 				if(periodY > HEIGHT)
@@ -68,7 +71,7 @@ public class PerlinNoiseGeneration extends NoiseDisplayCore implements KeyListen
 				}
 				return true;
 			}
-			case KeyEvent.VK_D:
+			case KeyEvent.VK_D://if D, decrease y period
 			{
 				periodY--;
 				if(periodY < 1)
@@ -85,12 +88,14 @@ public class PerlinNoiseGeneration extends NoiseDisplayCore implements KeyListen
 	@Override
 	public void regenNoise(long seed)
 	{
+		//fill array
 		PerlinNoise.fill_perlin_noise_array(noise, seed, periodX, periodY);
 	}
 
 	@Override
 	public void drawInfo(Graphics2D g2)
 	{
+		//display infos
 		drawString("Period X: " + periodX, 100, g2);
 		drawString("Period Y: " + periodY, 100, g2);
 	}

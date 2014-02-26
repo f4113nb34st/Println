@@ -17,7 +17,7 @@ import noise.voronoi.*;
  *
  */
 @SuppressWarnings("serial")
-public class AdvVoronoiNoiseGenerationWeb extends NoiseDisplayCoreWeb implements KeyListener
+public class AdvVoronoiNoiseGenerationWeb extends NoiseDisplayCoreWeb
 {
 	//list of randomly generated objects to render
 	private ArrayList<VoronoiObject> objects = new ArrayList<VoronoiObject>();
@@ -61,18 +61,19 @@ public class AdvVoronoiNoiseGenerationWeb extends NoiseDisplayCoreWeb implements
 		{
 			switch(rand.nextInt(3))
 			{
-				case 0:
-					objects.add(new VoronoiPoint(rand.nextInt(WIDTH), rand.nextInt(HEIGHT)));//random point
+				case 0://random point
+					objects.add(new VoronoiPoint(rand.nextInt(WIDTH), rand.nextInt(HEIGHT)));
 					break;
-				case 1:
-					objects.add(new VoronoiCircle(rand.nextInt(WIDTH), rand.nextInt(HEIGHT), (int)(rand.nextDouble() * 50) + 10, rand.nextBoolean()));//random circle
+				case 1://random circle
+					objects.add(new VoronoiCircle(rand.nextInt(WIDTH), rand.nextInt(HEIGHT), (int)(rand.nextDouble() * 50) + 10, rand.nextBoolean()));
 					break;
-				case 2:
-					objects.add(new VoronoiLine(rand.nextInt(WIDTH), rand.nextInt(HEIGHT), rand.nextInt(WIDTH), rand.nextInt(HEIGHT)));//random line
+				case 2://random line
+					objects.add(new VoronoiLine(rand.nextInt(WIDTH), rand.nextInt(HEIGHT), rand.nextInt(WIDTH), rand.nextInt(HEIGHT)));
 					break;
 			}
 		}
-		AdvancedVoronoiNoise.fill_adv_voronoi_noise_array(noise, objects, disFunc, comFunc);//fill the array
+		//fill the array
+		AdvancedVoronoiNoise.fill_adv_voronoi_noise_array(noise, objects, disFunc, comFunc);
 	}
 
 	@Override

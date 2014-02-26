@@ -2,7 +2,6 @@ package core;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import core.base.NoiseDisplayCoreWeb;
 import util.Interpolation;
 import noise.FractalNoise;
@@ -16,11 +15,15 @@ import noise.InterpNoise;
  *
  */
 @SuppressWarnings("serial")
-public class FractalNoiseGenerationWeb extends NoiseDisplayCoreWeb implements KeyListener
-{	
+public class FractalNoiseGenerationWeb extends NoiseDisplayCoreWeb
+{
+	//the current interpolation function to use
 	private Interpolation inter = Interpolation.LINEAR;
+	//the fine octave
 	private int fineOctave = 0;
+	//the broad octave
 	private int broadOctave = 8;
+	//the persistence of the octaves
 	private double persistence = .5;
 	
 	@Override 
@@ -41,7 +44,7 @@ public class FractalNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Ke
 				takeScreenShot();
 				break;
 			}
-			case KeyEvent.VK_Q:
+			case KeyEvent.VK_Q://if Q increase fineOctave
 			{
 				if(fineOctave < broadOctave)
 				{
@@ -50,7 +53,7 @@ public class FractalNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Ke
 				}
 				break;
 			}
-			case KeyEvent.VK_E:
+			case KeyEvent.VK_E://if E decrease fineOctave
 			{
 				if(fineOctave > 0)
 				{
@@ -59,7 +62,7 @@ public class FractalNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Ke
 				}
 				break;
 			}
-			case KeyEvent.VK_A:
+			case KeyEvent.VK_A://if A increase broadOctave
 			{
 				if((1 << broadOctave) < Math.min(WIDTH, HEIGHT))
 				{
@@ -68,7 +71,7 @@ public class FractalNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Ke
 				}
 				break;
 			}
-			case KeyEvent.VK_D:
+			case KeyEvent.VK_D://if D decrease broadOctave
 			{
 				if(broadOctave > fineOctave)
 				{
@@ -77,7 +80,7 @@ public class FractalNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Ke
 				}
 				break;
 			}
-			case KeyEvent.VK_Z:
+			case KeyEvent.VK_Z://if Z increase persistence
 			{
 				if(persistence < 2)
 				{
@@ -86,7 +89,7 @@ public class FractalNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Ke
 				}
 				break;
 			}
-			case KeyEvent.VK_C:
+			case KeyEvent.VK_C://if C decrease persistence
 			{
 				if(persistence > 0)
 				{
@@ -96,6 +99,7 @@ public class FractalNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Ke
 				break;
 			}
 		}
+		//round persistence
 		persistence = Math.round(persistence * 10) / 10D;
 		
 		return false;
@@ -104,12 +108,14 @@ public class FractalNoiseGenerationWeb extends NoiseDisplayCoreWeb implements Ke
 	@Override
 	public void regenNoise(long seed)
 	{
+		//fill array
 		FractalNoise.fill_fractal_noise_array(noise, seed, InterpNoise.getAsFunction(inter), fineOctave, broadOctave, persistence);
 	}
 
 	@Override
 	public void drawInfo(Graphics2D g2)
 	{
+		//display infos
 		drawString(inter.getName(), 125, g2);
 		drawString("Fine Octave: " + fineOctave, 125, g2);
 		drawString("Broad Octave: " + broadOctave, 125, g2);

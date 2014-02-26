@@ -16,7 +16,7 @@ import noise.voronoi.*;
  * @author F4113nb34st
  *
  */
-public class AdvVoronoiNoiseGeneration extends NoiseDisplayCore implements KeyListener
+public class AdvVoronoiNoiseGeneration extends NoiseDisplayCore
 {
 	public static void main(String[] args)
 	{
@@ -39,6 +39,7 @@ public class AdvVoronoiNoiseGeneration extends NoiseDisplayCore implements KeyLi
 	//our combine function
 	private CombineFunction comFunc = CombineFunction.F1;
 	
+	//pass title to SimpleCore
 	public AdvVoronoiNoiseGeneration(String title)
 	{
 		super(title);
@@ -79,18 +80,19 @@ public class AdvVoronoiNoiseGeneration extends NoiseDisplayCore implements KeyLi
 		{
 			switch(rand.nextInt(3))
 			{
-				case 0:
-					objects.add(new VoronoiPoint(rand.nextInt(WIDTH), rand.nextInt(HEIGHT)));//random point
+				case 0://random point
+					objects.add(new VoronoiPoint(rand.nextInt(WIDTH), rand.nextInt(HEIGHT)));
 					break;
-				case 1:
-					objects.add(new VoronoiCircle(rand.nextInt(WIDTH), rand.nextInt(HEIGHT), (int)(rand.nextDouble() * 50) + 10, rand.nextBoolean()));//random circle
+				case 1://random circle
+					objects.add(new VoronoiCircle(rand.nextInt(WIDTH), rand.nextInt(HEIGHT), (int)(rand.nextDouble() * 50) + 10, rand.nextBoolean()));
 					break;
-				case 2:
-					objects.add(new VoronoiLine(rand.nextInt(WIDTH), rand.nextInt(HEIGHT), rand.nextInt(WIDTH), rand.nextInt(HEIGHT)));//random line
+				case 2://random line
+					objects.add(new VoronoiLine(rand.nextInt(WIDTH), rand.nextInt(HEIGHT), rand.nextInt(WIDTH), rand.nextInt(HEIGHT)));
 					break;
 			}
 		}
-		AdvancedVoronoiNoise.fill_adv_voronoi_noise_array(noise, objects, disFunc, comFunc);//fill the array
+		//fill the array
+		AdvancedVoronoiNoise.fill_adv_voronoi_noise_array(noise, objects, disFunc, comFunc);
 	}
 
 	@Override
