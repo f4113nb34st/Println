@@ -146,7 +146,7 @@ public class OneDInterpolation extends SimpleCore implements KeyListener
 		double[] dots = new double[VALUES];
 		for(int i = 0; i < dots.length; i++)
 		{
-			dots[i] = BasicNoise.noise_gen(i * UNIT, 0);
+			dots[i] = BasicNoise.noise_gen(0, i * UNIT);
 		}
 		
 		//previous target y, used to ensure line is continuous
