@@ -1,5 +1,4 @@
 package noise;
-import java.util.Random;
 
 /**
  * 
@@ -8,79 +7,24 @@ import java.util.Random;
  * @author F4113nb34st
  *
  */
-public class BasicNoise implements NoiseFunction
+public final class BasicNoise extends SeededNoise
 {
-	//random instance for rand values generation
-	private static final Random rand = new Random();
+	/**
+	 * The NoiseGenerator instance for this BasicNoise.
+	 */
+	private NoiseGenerator gen = new NoiseGenerator();
 	
 	/**
-	 * Generates a consistent, pseudo-random value between 0 and 1 for the given x value.
-	 * Generates a consistent, pseudo-random value between 0 and 1 for the given x-y-z values.
-	 * @param x The x position..
-	 * @param seed The long to seed the noise with.
-	 * @return The resulting noise value.
+	 * Creates a new BasicNoise with the given seed.
+	 * @param s
 	 */
-	public static final double noise_gen(double x, long seed)
+	public BasicNoise(long s)
 	{
-		return noise_gen(x, 0, seed);
+		super(s);
 	}
 
-	/**
-	 * Generates a consistent, pseudo-random value between 0 and 1 for the given x-y values.
-	 * Generates a consistent, pseudo-random value between 0 and 1 for the given x-y-z values.
-	 * @param x The x position.
-	 * @param y The y position.
-	 * @param seed The long to seed the noise with.
-	 * @return The resulting noise value.
-	 */
-	public static final double noise_gen(double x, double y, long seed)
-	{
-		return noise_gen(x, y, 0, seed);
-	}
-
-	/**
-	 * Generates a consistent, pseudo-random value between 0 and 1 for the given x-y-z values.
-	 * @param x The x position.
-	 * @param y The y position.
-	 * @param z The z position.
-	 * @param seed The long to seed the noise with.
-	 * @return The resulting noise value.
-	 */
-	public static final double noise_gen(double x, double y, double z, long seed)
-	{
-		rand.setSeed(seed);
-		double xmulti = rand.nextDouble() * 1000;// rand number between 0 and 1000
-		double ymulti = rand.nextDouble() * 1000;// rand number between 0 and 1000
-		double zmulti = rand.nextDouble() * 1000;// rand number between 0 and 1000
-		//mangle inputs beyond recognition
-		int n = (int)((x + ((y + (z * zmulti)) * ymulti)) * xmulti);
-		n = (n << 13) ^ n;
-		return ((1.0 - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0) * .5) + .5;
-	}
-	
-	/**
-	 * Generates a 2D noise array with the given seed.
-	 * @param width The width of the array.
-	 * @param height The height of the array.
-	 * @param seed The seed to use in the noise generation.
-	 * @return The resulting noise array.
-	 */
-	public static final NoiseArray noise_array(int width, int height, long seed)
-	{
-		//create new array
-		NoiseArray noise = new NoiseArray(width, height);
-		//fill it
-		fill_noise_array(noise, seed);
-		//return array
-		return noise;
-	}
-	
-	/**
-	 * Fills the given 2D array with noise of the given seed.
-	 * @param noise The array to fill.
-	 * @param seed The seed to use in the noise generation..
-	 */
-	public static final void fill_noise_array(NoiseArray noise, long seed)
+	@Override
+	public void fillArray(NoiseArray noise)
 	{
 		//for all pixels
 		for(int x = 0; x <= noise.getWidth(); x++)
@@ -88,25 +32,8 @@ public class BasicNoise implements NoiseFunction
 			for(int y = 0; y <= noise.getHeight(); y++)
 			{
 				//get to noise value
-				noise.setRelative(x, y, noise_gen(x, y, seed));
+				noise.setRelative(x, y, gen.noise_gen(seed, x, y));
 			}
 		}
-	}
-	
-	/**
-	 * Returns a basic noise function.
-	 * @return The noise function.
-	 */
-	public static final NoiseFunction getAsFunction()
-	{
-		return new BasicNoise();
-	}
-	
-	private BasicNoise(){}
-
-	@Override
-	public void fillArray(NoiseArray array, long seed, int octave)
-	{
-		fill_noise_array(array, seed);
 	}
 }

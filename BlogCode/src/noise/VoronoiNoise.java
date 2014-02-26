@@ -11,39 +11,38 @@ import noise.voronoi.DistanceFunction;
  * @author F4113nb34st
  *
  */
-public class VoronoiNoise implements NoiseFunction
+public final class VoronoiNoise extends PeriodicNoise
 {
 	/**
-	 * Generates a simple Voronoi noise array.
-	 * @param width The width of the array.
-	 * @param height The height of the array.
-	 * @param seed The seed to seed the src points with.
-	 * @param periodX The x period for the src points.
-	 * @param periodY The y period for the src points.
-	 * @param disFunc The distance function to use.
-	 * @param comFunc The combine function to use.
-	 * @return The resulting noise array.
+	 * The NoiseGenerator instance for this VoronoiNoise.
 	 */
-	public static final NoiseArray voronoi_noise_array(int width, int height, long seed, int periodX, int periodY, DistanceFunction disFunc, CombineFunction comFunc)
-	{
-		//make new array
-		NoiseArray noise = new NoiseArray(width, height);
-		//fill it
-		fill_voronoi_noise_array(noise, seed, periodX, periodY, disFunc, comFunc);
-		//return it
-		return noise;
-	}
+	private NoiseGenerator gen = new NoiseGenerator();
+	/**
+	 * The distance function to use for the Voronoi generation.
+	 */
+	public DistanceFunction disFunc;
+	/**
+	 * The combine function to use for the Voronoi generation.
+	 */
+	public CombineFunction comFunc;
 	
 	/**
-	 * Fills the given NoiseArray with simple Voronoi noise.
-	 * @param noise The array to fill.
-	 * @param seed The seed to seed the src points with.
-	 * @param periodX The x period for the src points.
-	 * @param periodY The y period for the src points.
-	 * @param disFunc The distance function to use.
-	 * @param comFunc The combine function to use.
+	 * Creates a new VoronoiNoise with the given seed, periods, distance function and combine function.
+	 * @param s The seed.
+	 * @param px The x period.
+	 * @param py The y period.
+	 * @param disF The distance function.
+	 * @param comF The combine function.
 	 */
-	public static final void fill_voronoi_noise_array(NoiseArray noise, long seed, int periodX, int periodY, DistanceFunction disFunc, CombineFunction comFunc)
+	public VoronoiNoise(long s, int px, int py, DistanceFunction disF, CombineFunction comF)
+	{
+		super(s, px, py);
+		disFunc = disF;
+		comFunc = comF;
+	}
+
+	@Override
+	public void fillArray(NoiseArray noise)
 	{
 		//get number of dots in x dimention
 		int dotsX = (int)Math.ceil(noise.getWidth() / (double)periodX);
@@ -56,8 +55,8 @@ public class VoronoiNoise implements NoiseFunction
 		{
 			for(int j = 0; j < dots[0].length; j++)
 			{
-				dots[i][j][0] = BasicNoise.noise_gen(i, j, 0, seed);//set x
-				dots[i][j][1] = BasicNoise.noise_gen(i, j, 1, seed);//set y
+				dots[i][j][0] = gen.noise_gen(seed, i, j, 0);//set x
+				dots[i][j][1] = gen.noise_gen(seed, i, j, 1);//set y
 			}
 		}
 		
@@ -130,7 +129,7 @@ public class VoronoiNoise implements NoiseFunction
      * Inserts a value into an array so that the array is sorted from least to greatest.
      * If the value is greater than the max value, it is not added.
      */
-    private static void insert(double[] array, double value)
+    private void insert(double[] array, double value)
     {
    	 	double temp;
         for(int i = array.length - 1; i >= 0; i--)
@@ -147,30 +146,4 @@ public class VoronoiNoise implements NoiseFunction
             }
         }
     }
-
-	/**
-	 * Returns an interp noise function with the given interpolation function.
-	 * @param inter The interpolation function to use.
-	 * @return The noise function.
-	 */
-	public static final NoiseFunction getAsFunction(DistanceFunction disFunc, CombineFunction comFunc)
-	{
-		return new VoronoiNoise(disFunc, comFunc);
-	}
-	
-	private DistanceFunction disFunc = DistanceFunction.Euclid;
-	private CombineFunction comFunc = CombineFunction.F1;
-	
-	private VoronoiNoise(DistanceFunction disF, CombineFunction comF)
-	{
-		disFunc = disF;
-		comFunc = comF;
-	}
-
-	@Override
-	public void fillArray(NoiseArray array, long seed, int octave)
-	{
-		int period = 1 << octave;//2 ^ octave
-		fill_voronoi_noise_array(array, seed, period, period, disFunc, comFunc);
-	}
 }

@@ -13,42 +13,8 @@ import noise.voronoi.*;
  * @author F4113nb34st
  *
  */
-public final class AdvancedVoronoiNoise
+public final class AdvancedVoronoiNoise extends Noise
 {
-	
-	/**
-	 * Generates an advanced Voronoi noise array.
-	 * @param width The width of the array.
-	 * @param height The height of the array.
-	 * @param objects The list of Voronoi objects to generate the array from.
-	 * @param disFunc The distance function to use.
-	 * @param comFunc The combine function to use.
-	 * @return The resulting noise array.
-	 */
-	public static final NoiseArray adv_voronoi_noise_array(int width, int height, ArrayList<VoronoiObject> objects, DistanceFunction disFunc, CombineFunction comFunc)
-	{
-		//make new array
-		NoiseArray noise = new NoiseArray(width, height);
-		//fill it
-		fill_adv_voronoi_noise_array(noise, objects, disFunc, comFunc);
-		//return it
-		return noise;
-	}
-	
-	/**
-	 * Fills a noise array with advanced Voronoi noise.
-	 * @param width The width of the array.
-	 * @param height The height of the array.
-	 * @param objects The list of Voronoi objects to generate the array from.
-	 * @param disFunc The distance function to use.
-	 * @param comFunc The combine function to use.
-	 */
-	public static final void fill_adv_voronoi_noise_array(NoiseArray noise, ArrayList<VoronoiObject> objects, DistanceFunction disFunc, CombineFunction comFunc)
-	{
-		//we do all the calculations in a local instance instead of static variables to make things thread-safe
-		new AdvancedVoronoiNoise(disFunc, comFunc).fill_adv_voronoi_noise_array(noise, objects);
-	}
-	
 	/**
 	 * Simple class that stores a point and a src object.
 	 */
@@ -86,31 +52,50 @@ public final class AdvancedVoronoiNoise
 		}
 	}
 	
-	//our distance function
+	/**
+	 * The list of Voronoi Objects to make the noise from.
+	 */
+	public ArrayList<VoronoiObject> objects;
+	/**
+	 * The distance function to use.
+	 */
 	public DistanceFunction disFunc;
-	//our combine function
+	/**
+	 * The combine function to use.
+	 */
 	public CombineFunction comFunc;
-	//all past calculated values
-	public HashSet<Location> past;
-	//all values we are currently calculating
-	public HashSet<Location> current;
-	//all values to be calculated next generation
-	public HashSet<Location> flagged;
-	//the pixels and their closest values
-	public double[][][] pixels;
+	/**
+	 * Past calculated locations.
+	 */
+	private HashSet<Location> past;
+	/**
+	 * Locations currently being processed.
+	 */
+	private HashSet<Location> current;
+	/**
+	 * Locations flagged for next generation.
+	 */
+	private HashSet<Location> flagged;
+	/**
+	 * Distances for each pixel.
+	 */
+	private double[][][] pixels;
 	
-	private AdvancedVoronoiNoise(DistanceFunction dis, CombineFunction com)
+	/**
+	 * Creates a new AdvancedVoronoiNoise for the given objects, distance function, and combine function.
+	 * @param objs The Voronoi objects.
+	 * @param dis The distance function to use.
+	 * @param com The combine function to use.
+	 */
+	public AdvancedVoronoiNoise(ArrayList<VoronoiObject> objs, DistanceFunction dis, CombineFunction com)
 	{
+		objects = objs;
 		disFunc = dis;
 		comFunc = com;
 	}
 	
-	/**
-	 * Fills the given noise array with Voronoi noise from the given objects using the local distance and combine functions.
-	 * @param noise The noise array to fill.
-	 * @param objects The objects to generate the noise from.
-	 */
-	public void fill_adv_voronoi_noise_array(NoiseArray noise, ArrayList<VoronoiObject> objects)
+	@Override
+	public void fillArray(NoiseArray noise)
 	{
 		//create our pixel array.
 		pixels = new double[noise.getWidth()][noise.getHeight()][comFunc.getNumDistances()];
@@ -241,7 +226,7 @@ public final class AdvancedVoronoiNoise
      * @param value The value we might add.
      * @return True if added, false if discarded.
      */
-    private static final boolean insert(double[] array, double value)
+    private boolean insert(double[] array, double value)
     {
     	double temp;
         for(int i = array.length - 1; i >= 0; i--)

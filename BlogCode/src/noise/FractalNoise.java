@@ -1,7 +1,5 @@
 package noise;
 
-import java.util.Random;
-
 /**
  * 
  * Stores methods for generating Fractal noise.
@@ -9,42 +7,53 @@ import java.util.Random;
  * @author F4113nb34st
  *
  */
-public class FractalNoise
+public final class FractalNoise extends SeededNoise
 {
 	/**
-	 * Generates a fractal noise array.
-	 * @param width The width of the array.
-	 * @param height The height of the array.
-	 * @param seed The seed to seed the baseNoise array.
-	 * @param func The noise function to use.
-	 * @param fineOctave The minimum octave to use.
-	 * @param broadOctave The maximum octave to use.
-	 * @param persistence The persistence of the octaves.
-	 * @return The resulting noise array.
+	 * The NoiseGenerator instance for this FractalNoise.
 	 */
-	public static final NoiseArray fractal_noise_array(int width, int height, long seed, NoiseFunction func, int fineOctave, int broadOctave, double persistence)
-	{
-		//create new array
-		NoiseArray noise = new NoiseArray(width, height);
-		//fill it
-		fill_fractal_noise_array(noise, seed, func, fineOctave, broadOctave, persistence);
-		//return it
-		return noise;
-	}
+	private NoiseGenerator gen = new NoiseGenerator();
+	/**
+	 * The seed of this noise.
+	 */
+	public long seed;
+	/**
+	 * The noise function to use to generate the octaves.
+	 */
+	public PeriodicNoise baseNoise;
+	/**
+	 * The finest octave.
+	 */
+	public int fineOctave;
+	/**
+	 * The broadest octave.
+	 */
+	public int broadOctave;
+	/**
+	 * The persistence of the octaves.
+	 */
+	public double persistence;
 	
 	/**
-	 * Fills the given array with fractal noise.
-	 * @param noise The noise array to fill.
-	 * @param seed The seed to seed the octave arrays.
-	 * @param func The noise function to use.
-	 * @param fineOctave The minimum octave to use.
-	 * @param broadOctave The maximum octave to use.
-	 * @param persistence The persistence of the octaves.
+	 * Creates a new FractalNoise with the given seed, base noise, fine and broad octaves, and persistence.
+	 * @param s The seed.
+	 * @param base The base noise generator.
+	 * @param fine The fine octave.
+	 * @param broad The broad octave.
+	 * @param persis The persistence.
 	 */
-	public static final void fill_fractal_noise_array(NoiseArray noise, long seed, NoiseFunction func, int fineOctave, int broadOctave, double persistence)
+	public FractalNoise(long s, PeriodicNoise base, int fine, int broad, int persis)
 	{
-		//create our personal random
-		Random rand = new Random(seed);
+		super(s);
+		baseNoise = base;
+		fineOctave = fine;
+		broadOctave = broad;
+		persistence = persis;
+	}
+
+	@Override
+	public void fillArray(NoiseArray noise)
+	{
 		//create array of octaves
 		NoiseArray[] octaves = new NoiseArray[broadOctave + 1 - fineOctave];
 		
@@ -53,8 +62,10 @@ public class FractalNoise
 		{
 			//create new array for octave
 			octaves[octave - fineOctave] = new NoiseArray(noise.getWidth(), noise.getHeight());
+			//generate the octave seed
+			long octaveSeed = (long)(Long.MAX_VALUE * gen.noise_gen(seed, (double)octave));
 			//fill from noise function with a random seed
-			func.fillArray(octaves[octave - fineOctave], rand.nextLong(), octave);
+			baseNoise.fillArray(octaves[octave - fineOctave], octaveSeed, octave);
 		}
 		
 		//for all pixels

@@ -5,40 +5,31 @@ import util.Interpolation;
 
 /**
  * 
- * Stores methods for generating 2D Perlin pseudo-random noise.
+ * Class that generates 2D Perlin pseudo-random noise.
  * 
  * @author F4113nb34st
  *
  */
-public class PerlinNoise implements NoiseFunction
+public final class PerlinNoise extends PeriodicNoise
 {
 	/**
-	 * Generates a Perlin noise array.
-	 * @param width The width of the array.
-	 * @param height The height of the array.
-	 * @param seed The seed to seed the baseNoise array.
-	 * @param periodX The x period of the smoothing.
-	 * @param periodY The y period of the smoothing.
-	 * @return The resulting noise array.
+	 * The NoiseGenerator instance for this PerlinNoise.
 	 */
-	public static final NoiseArray perlin_noise_array(int width, int height, long seed, int periodX, int periodY)
-	{
-		//create new array
-		NoiseArray noise = new NoiseArray(width, height);
-		//fill it
-		fill_perlin_noise_array(noise, seed, periodX, periodY);
-		//return it
-		return noise;
-	}
+	private NoiseGenerator gen = new NoiseGenerator();
 	
 	/**
-	 * Fills the given array with Perlin noise.
-	 * @param noise The noise array to fill.
-	 * @param seed The seed to seed the baseNoise array should it need to be generated.
-	 * @param periodX The x period of the smoothing.
-	 * @param periodY The y period of the smoothing.
+	 * Creates a new PerlinNoise with the given seed and periods.
+	 * @param s The seed.
+	 * @param px The x period.
+	 * @param py The y period.
 	 */
-	public static final void fill_perlin_noise_array(NoiseArray noise, long seed, int periodX, int periodY)
+	public PerlinNoise(long s, int px, int py)
+	{
+		super(s, px, py);
+	}
+	
+	@Override
+	public void fillArray(NoiseArray noise)
 	{
 		//calculate the base width and height (no need to calculate more values than this in base array)
 		int baseW = (int)Math.ceil(noise.getWidth() / (double)periodX);
@@ -94,7 +85,7 @@ public class PerlinNoise implements NoiseFunction
 	 * @param seed The seed to seed map with.
 	 * @return The resulting gradient map.
 	 */
-	private static final double[][][] getGradientMap(int width, int height, long seed)
+	private double[][][] getGradientMap(int width, int height, long seed)
 	{
 		//create the map
 		double[][][] gradients = new double[width][height][2];
@@ -104,7 +95,7 @@ public class PerlinNoise implements NoiseFunction
 			for(int j = 0; j < gradients[0].length; j++)
 			{
 				//get random angle for this point
-				double angle = BasicNoise.noise_gen(i, j, seed) * Math.PI * 2;
+				double angle = gen.noise_gen(seed, i, j) * Math.PI * 2;
 				//set x and y
 				gradients[i][j][0] = FastMath.cos(angle);
 				gradients[i][j][1] = FastMath.sin(angle);
@@ -121,7 +112,7 @@ public class PerlinNoise implements NoiseFunction
 	 * @param y The y value of the point.
 	 * @return The dot product.
 	 */
-	private static final double dotProduct(double[] gradient, double x, double y)
+	private double dotProduct(double[] gradient, double x, double y)
 	{
 		return (gradient[0] * x) + (gradient[1] * y);
 	}
@@ -132,29 +123,12 @@ public class PerlinNoise implements NoiseFunction
 	 * @param value The value to fade.
 	 * @return The faded value.
 	 */
-	private static final double fade(double value)
+	private double fade(double value)
 	{
 		//return 6x^5 - 15x^4 + 10x^3;
 		double val3 = value * value * value;
 		double val4 = val3 * value;
 		double val5 = val4 * value;
 		return (6 * val5) - (15 * val4) + (10 * val3);
-	}
-	
-	/**
-	 * Returns an interp noise function with the given interpolation function.
-	 * @param inter The interpolation function to use.
-	 * @return The noise function.
-	 */
-	public static final NoiseFunction getAsFunction()
-	{
-		return new PerlinNoise();
-	}
-
-	@Override
-	public void fillArray(NoiseArray array, long seed, int octave)
-	{
-		int period = 1 << octave;//2 ^ octave
-		fill_perlin_noise_array(array, seed, period, period);
 	}
 }
