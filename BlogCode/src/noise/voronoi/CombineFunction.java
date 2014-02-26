@@ -1,11 +1,31 @@
 package noise.voronoi;
 
+/**
+ * 
+ * Enum of different combine functions for Voronoi noise.
+ * 
+ * @author F4113nb34st
+ *
+ */
 public enum CombineFunction
 {
-	F1, F2, F2_F1, F3, F3_F1, F3_F2, F3_F2_F1;
+	/**Closest.*/
+	F1, 
+	/**Second Closest.*/
+	F2, 
+	/**Second minus First Closest.*/
+	F2_F1, 
+	/**Third Closest.*/
+	F3, 
+	/**Third minus First Closest.*/
+	F3_F1, 
+	/**Third minus Second Closest.*/
+	F3_F2, 
+	/**Third minus Second plus First Closest.*/
+	F3_F2_F1;
 	
 	/**
-	 * Returns the noise value to use based on the given distances.
+	 * Returns the value to use based on the given distances.
 	 */
 	public double combineFunc(double[] values)
 	{

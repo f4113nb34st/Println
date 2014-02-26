@@ -10,6 +10,7 @@ import java.util.Random;
  */
 public class BasicNoise implements NoiseFunction
 {
+	//random instance for rand values generation
 	private static final Random rand = new Random();
 	
 	/**
@@ -51,6 +52,7 @@ public class BasicNoise implements NoiseFunction
 		double xmulti = rand.nextDouble() * 1000;// rand number between 0 and 1000
 		double ymulti = rand.nextDouble() * 1000;// rand number between 0 and 1000
 		double zmulti = rand.nextDouble() * 1000;// rand number between 0 and 1000
+		//mangle inputs beyond recognition
 		int n = (int)((x + ((y + (z * zmulti)) * ymulti)) * xmulti);
 		n = (n << 13) ^ n;
 		return ((1.0 - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0) * .5) + .5;
@@ -65,8 +67,11 @@ public class BasicNoise implements NoiseFunction
 	 */
 	public static final NoiseArray noise_array(int width, int height, long seed)
 	{
+		//create new array
 		NoiseArray noise = new NoiseArray(width, height);
+		//fill it
 		fill_noise_array(noise, seed);
+		//return array
 		return noise;
 	}
 	
@@ -77,11 +82,13 @@ public class BasicNoise implements NoiseFunction
 	 */
 	public static final void fill_noise_array(NoiseArray noise, long seed)
 	{
-		for(int x = noise.minX; x <= noise.maxX; x++)
+		//for all pixels
+		for(int x = 0; x <= noise.getWidth(); x++)
 		{
-			for(int y = noise.minY; y <= noise.maxY; y++)
+			for(int y = 0; y <= noise.getHeight(); y++)
 			{
-				noise.set(x, y, noise_gen(x, y, seed));
+				//get to noise value
+				noise.setRelative(x, y, noise_gen(x, y, seed));
 			}
 		}
 	}

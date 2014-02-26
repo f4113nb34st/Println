@@ -1,8 +1,44 @@
 package util;
 
+/**
+ * 
+ * Stores different methods of interpolation.
+ * 
+ * @author F4113nb34st
+ *
+ */
 public enum Interpolation
 {
-	LINEAR, COSINE, CUBIC, CATMULL_ROM, HERMITE;
+	/**
+	 * Simple interpolation.
+	 * Not continuous, nor is derivative.
+	 */
+	LINEAR, 
+	/**
+	 * Smoothed interpolation.
+	 * Continuous, but derivative isn't.
+	 */
+	COSINE,
+	/**
+	 * Smoothed interpolation.
+	 * Requires extra samples.
+	 * Continuous, and derivative too.
+	 */
+	CUBIC, 
+	/**
+	 * Smoothed interpolation.
+	 * Requires extra samples.
+	 * Continuous, and derivative too.
+	 * Less lax than cubic.
+	 */
+	CATMULL_ROM, 
+	/**
+	 * Smoothed interpolation.
+	 * Requires extra samples.
+	 * Continuous, and derivative too.
+	 * Allows extra parameters.
+	 */
+	HERMITE;
 	
 	/**
 	 * Returns true if this interpolation function needs extra values.

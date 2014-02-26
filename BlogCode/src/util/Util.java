@@ -1,5 +1,12 @@
 package util;
 
+/**
+ * 
+ * Simple util class for misc. methods.
+ * 
+ * @author F4113nb34st
+ *
+ */
 public class Util
 {
 	/**

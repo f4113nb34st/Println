@@ -23,8 +23,11 @@ public class InterpNoise implements NoiseFunction
 	 */
 	public static final NoiseArray interp_noise_array(int width, int height, long seed, Interpolation interp, int periodX, int periodY)
 	{
+		//create new array
 		NoiseArray noise = new NoiseArray(width, height);
+		//fill it
 		fill_interp_noise_array(noise, null, seed, interp, periodX, periodY);
+		//return it
 		return noise;
 	}
 	
@@ -40,61 +43,89 @@ public class InterpNoise implements NoiseFunction
 	 */
 	public static final void fill_interp_noise_array(NoiseArray noise, NoiseArray baseNoise, long seed, Interpolation interp, int periodX, int periodY)
 	{
+		//calculate the base width and height (no need to calculate more values than this in base array)
 		int baseW = (int)Math.ceil(noise.getWidth() / (double)periodX);
 		int baseH = (int)Math.ceil(noise.getHeight() / (double)periodY);
-		if(baseNoise == null)
+		if(baseNoise == null)//if we were supposed to calculate the base noise array
 		{
+			//create it
 			baseNoise = new NoiseArray(baseW, baseH);
 		}else
 		{
+			//otherwise ensure room
 			baseNoise.setBounds(baseW, baseH);
 		}
+		//fill with basic noise
 		BasicNoise.fill_noise_array(baseNoise, seed);
 		
+		//if only needs top and bottom values
 		if(!interp.extended())
 		{
-			for(int x = noise.minX; x <= noise.maxX; x++)
+			//for all columns
+			for(int x = 0; x < noise.getWidth(); x++)
 			{
-				int bottomX = (int)((x - noise.minX) / periodX);
+				//get botX
+				int bottomX = (int)(x / periodX);
+				//get topX
 				int topX = bottomX + 1;
-				double blendX = ((x - noise.minX) % periodX) / (double)periodX;
+				//get blend part for x
+				double blendX = (x % periodX) / (double)periodX;
 				
-				for(int y = noise.minY; y <= noise.maxY; y++)
+				//for all rows
+				for(int y = 0; y < noise.getHeight(); y++)
 				{
-					int bottomY = (int)((y - noise.minY) / periodY);
+					//get botY
+					int bottomY = (int)(y / periodY);
+					//get topY
 					int topY = bottomY + 1;
-					double blendY = ((y - noise.minY) % periodY) / (double)periodY;
+					//get blend part for y
+					double blendY = (y % periodY) / (double)periodY;
 					
+					//interp between xbots and xtops
 					double xBotInterp = interp.interpolate(baseNoise.get(bottomX, bottomY), baseNoise.get(bottomX, topY), blendY);
 					double xTopInterp = interp.interpolate(baseNoise.get(topX, bottomY), baseNoise.get(topX, topY), blendY);
 					
-					noise.set(x, y, interp.interpolate(xBotInterp, xTopInterp, blendX));
+					//interp interps
+					noise.setRelative(x, y, interp.interpolate(xBotInterp, xTopInterp, blendX));
 				}
 			}
-		}else
+		}else//we need past and future values too
 		{
-			for(int x = noise.minX; x <= noise.maxX; x++)
+			//for all columns
+			for(int x = 0; x < noise.getWidth(); x++)
 			{
-				int bottomX = (int)((x - noise.minX) / periodX);
+				//get botX
+				int bottomX = (int)(x / periodX);
+				//get topX
 				int topX = bottomX + 1;
+				//get pastX
 				int pastX = bottomX - 1;
+				//get futureX
 				int futureX = topX + 1;
-				double blendX = ((x - noise.minX) % periodX) / (double)periodX;
+				//get blend part for x
+				double blendX = (x % periodX) / (double)periodX;
 				
-				for(int y = noise.minY; y <= noise.maxY; y++)
+				for(int y = 0; y < noise.getHeight(); y++)
 				{
-					int bottomY = (int)((y - noise.minY) / periodY);
+					//get botY
+					int bottomY = (int)(y / periodY);
+					//get topY
 					int topY = bottomY + 1;
+					//get pastY
 					int pastY = bottomY - 1;
+					//get futureY
 					int futureY = topY + 1;
-					double blendY = ((y - noise.minY) % periodY) / (double)periodY;
+					//get blend part for y
+					double blendY = (y % periodY) / (double)periodY;
 					
+					//interp between xbots, xtops, xpasts, and xfutures
 					double xPastInterp = interp.interpolate(baseNoise.get(pastX, pastY), baseNoise.get(pastX, bottomY), baseNoise.get(pastX, topY), baseNoise.get(pastX, futureY), blendY);
 					double xBotInterp = interp.interpolate(baseNoise.get(bottomX, pastY), baseNoise.get(bottomX, bottomY), baseNoise.get(bottomX, topY), baseNoise.get(bottomX, futureY), blendY);
 					double xTopInterp = interp.interpolate(baseNoise.get(topX, pastY), baseNoise.get(topX, bottomY), baseNoise.get(topX, topY), baseNoise.get(topX, futureY), blendY);
 					double xFutureInterp = interp.interpolate(baseNoise.get(futureX, pastY), baseNoise.get(futureX, bottomY), baseNoise.get(futureX, topY), baseNoise.get(futureX, futureY), blendY);
 					
-					noise.set(x, y, interp.interpolate(xPastInterp, xBotInterp, xTopInterp, xFutureInterp, blendX));
+					//interp interps
+					noise.setRelative(x, y, interp.interpolate(xPastInterp, xBotInterp, xTopInterp, xFutureInterp, blendX));
 				}
 			}
 		}

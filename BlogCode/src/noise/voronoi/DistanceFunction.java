@@ -2,13 +2,22 @@ package noise.voronoi;
 
 /**
  * Distance function to use in Voronoi calculations.
- * Euclid produces a scale pattern.
+ * Euclid and EuclidSq produces a scale pattern.
  * Manhattan and Chebychev are rectangle patterns.
  * Minkowski produces a star pattern.
  */
 public enum DistanceFunction
 {
-	Euclid, EuclidSq, Manhattan, Chebyshev, Minkowski0_5;
+	/**"Real" distance. Produces a scale-like pattern.*/
+	Euclid, 
+	/**Produces a dark scale-like pattern.*/
+	EuclidSq, 
+	/**Produces a square pattern.*/
+	Manhattan, 
+	/**Produces a diamond pattern.*/
+	Chebyshev, 
+	/**Produces a star pattern.*/
+	Minkowski0_5;
 	
 	/**
 	 * Returns the distance between the given points.
@@ -20,7 +29,7 @@ public enum DistanceFunction
 		{
 			default://default is also Euclid
 			case EuclidSq:
-				return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);//returns the square distance, sqrt's are calculated later.
+				return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);//returns the square distance, sqrt's are calculated later for Euclidean distance.
 			case Manhattan:	
 				return Math.abs(x1 - x2) + Math.abs(y1 - y2);
 			case Chebyshev:	
