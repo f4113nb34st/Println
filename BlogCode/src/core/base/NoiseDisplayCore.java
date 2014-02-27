@@ -58,8 +58,6 @@ public abstract class NoiseDisplayCore extends SimpleCore implements KeyListener
 		clearFrame = false;
 		//add key listener
 		frame.addKeyListener(this);
-		//init noise array
-		regenNoise();
 	}
 	
 	@Override 

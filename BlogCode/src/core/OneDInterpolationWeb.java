@@ -7,7 +7,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import core.base.SimpleApplet;
 import util.Interpolation;
-import noise.BasicNoise;
+import noise.NoiseGenerator;
 
 /**
  * 
@@ -40,6 +40,8 @@ public class OneDInterpolationWeb extends SimpleApplet implements KeyListener
 	private double tension = 0;
 	//the Hermite bias
 	private double bias = 0;
+	//the noise generator instance
+	private NoiseGenerator gen = new NoiseGenerator();
 	
 	//pass sizes
 	public OneDInterpolationWeb()
@@ -134,7 +136,7 @@ public class OneDInterpolationWeb extends SimpleApplet implements KeyListener
 		double[] dots = new double[VALUES];
 		for(int i = 0; i < dots.length; i++)
 		{
-			dots[i] = BasicNoise.noise_gen(0, i * UNIT);
+			dots[i] = gen.noise_gen(0, i * UNIT);
 		}
 		
 		//previous target y, used to ensure line is continuous

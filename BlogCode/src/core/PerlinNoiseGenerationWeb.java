@@ -15,10 +15,7 @@ import noise.PerlinNoise;
 @SuppressWarnings("serial")
 public class PerlinNoiseGenerationWeb extends NoiseDisplayCoreWeb
 {
-	//the x period
-	private int periodX = 5;
-	//the y period
-	private int periodY = 5;
+	private PerlinNoise noiseFunc = new PerlinNoise(0, 5, 5);
 	
 	@Override 
 	public boolean key(int code)
@@ -27,37 +24,37 @@ public class PerlinNoiseGenerationWeb extends NoiseDisplayCoreWeb
 		{
 			case KeyEvent.VK_Q://if Q, increase x period
 			{
-				periodX++;
-				if(periodX > WIDTH)
+				noiseFunc.periodX++;
+				if(noiseFunc.periodX > WIDTH)
 				{
-					periodX = WIDTH;
+					noiseFunc.periodX = WIDTH;
 				}
 				return true;
 			}
 			case KeyEvent.VK_E://if E, decrease x period
 			{
-				periodX--;
-				if(periodX < 1)
+				noiseFunc.periodX--;
+				if(noiseFunc.periodX < 1)
 				{
-					periodX = 1;
+					noiseFunc.periodX = 1;
 				}
 				return true;
 			}
 			case KeyEvent.VK_A://if A, increase y period
 			{
-				periodY++;
-				if(periodY > HEIGHT)
+				noiseFunc.periodY++;
+				if(noiseFunc.periodY > HEIGHT)
 				{
-					periodY = HEIGHT;
+					noiseFunc.periodY = HEIGHT;
 				}
 				return true;
 			}
 			case KeyEvent.VK_D://if D, decrease y period
 			{
-				periodY--;
-				if(periodY < 1)
+				noiseFunc.periodY--;
+				if(noiseFunc.periodY < 1)
 				{
-					periodY = 1;
+					noiseFunc.periodY = 1;
 				}
 				return true;
 			}
@@ -69,15 +66,17 @@ public class PerlinNoiseGenerationWeb extends NoiseDisplayCoreWeb
 	@Override
 	public void regenNoise(long seed)
 	{
+		//update seed
+		noiseFunc.seed = seed;
 		//fill array
-		PerlinNoise.fill_perlin_noise_array(noise, seed, periodX, periodY);
+		noiseFunc.fillArray(noise);
 	}
 
 	@Override
 	public void drawInfo(Graphics2D g2)
 	{
 		//display infos
-		drawString("Period X: " + periodX, 100, g2);
-		drawString("Period Y: " + periodY, 100, g2);
+		drawString("Period X: " + noiseFunc.periodX, 100, g2);
+		drawString("Period Y: " + noiseFunc.periodY, 100, g2);
 	}
 }

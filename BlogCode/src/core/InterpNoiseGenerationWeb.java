@@ -16,12 +16,8 @@ import noise.InterpNoise;
 @SuppressWarnings("serial")
 public class InterpNoiseGenerationWeb extends NoiseDisplayCoreWeb
 {		
-	//current inerpolation function
-	private Interpolation inter = Interpolation.LINEAR;
-	//periodX
-	private int periodX = 5;
-	//periodY
-	private int periodY = 5;
+	//the interp noise generator
+	private InterpNoise noiseFunc = new InterpNoise(0, 5, 5, Interpolation.LINEAR);
 	
 	@Override 
 	public boolean key(int code)
@@ -30,45 +26,45 @@ public class InterpNoiseGenerationWeb extends NoiseDisplayCoreWeb
 		{
 			case KeyEvent.VK_SPACE://if space, go to next interpolation type
 			{
-				int index = inter.ordinal();
+				int index = noiseFunc.interp.ordinal();
 				index++;
 				index %= Interpolation.values().length;
-				inter = Interpolation.values()[index];
+				noiseFunc.interp = Interpolation.values()[index];
 				return true;
 			}
 			case KeyEvent.VK_Q://if Q, increase periodX
 			{
-				periodX++;
-				if(periodX > WIDTH)
+				noiseFunc.periodX++;
+				if(noiseFunc.periodX > WIDTH)
 				{
-					periodX = WIDTH;
+					noiseFunc.periodX = WIDTH;
 				}
 				return true;
 			}
 			case KeyEvent.VK_E://if E, decrease periodX
 			{
-				periodX--;
-				if(periodX < 1)
+				noiseFunc.periodX--;
+				if(noiseFunc.periodX < 1)
 				{
-					periodX = 1;
+					noiseFunc.periodX = 1;
 				}
 				return true;
 			}
 			case KeyEvent.VK_A://if A, increase periodY
 			{
-				periodY++;
-				if(periodY > HEIGHT)
+				noiseFunc.periodY++;
+				if(noiseFunc.periodY > HEIGHT)
 				{
-					periodY = HEIGHT;
+					noiseFunc.periodY = HEIGHT;
 				}
 				return true;
 			}
 			case KeyEvent.VK_D://if D, decrease periodY
 			{
-				periodY--;
-				if(periodY < 1)
+				noiseFunc.periodY--;
+				if(noiseFunc.periodY < 1)
 				{
-					periodY = 1;
+					noiseFunc.periodY = 1;
 				}
 				return true;
 			}
@@ -80,16 +76,18 @@ public class InterpNoiseGenerationWeb extends NoiseDisplayCoreWeb
 	@Override
 	public void regenNoise(long seed)
 	{
+		//update seed
+		noiseFunc.seed = seed;
 		//fill array
-		InterpNoise.fill_interp_noise_array(noise, null, seed, inter, periodX, periodY);
+		noiseFunc.fillArray(noise);
 	}
 
 	@Override
 	public void drawInfo(Graphics2D g2)
 	{
 		//display infos
-		drawString(inter.getName(), 100, g2);
-		drawString("Period X: " + periodX, 100, g2);
-		drawString("Period Y: " + periodY, 100, g2);
+		drawString(noiseFunc.interp.getName(), 100, g2);
+		drawString("Period X: " + noiseFunc.periodX, 100, g2);
+		drawString("Period Y: " + noiseFunc.periodY, 100, g2);
 	}
 }
