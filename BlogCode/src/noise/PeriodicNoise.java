@@ -31,6 +31,8 @@ public abstract class PeriodicNoise extends SeededNoise
 		periodY = py;
 	}
 	
+	public abstract PeriodicNoise copy();
+	
 	/**
 	 * Fills the given array with noise of the given seed and octave.
 	 * Used by FractalNoise.

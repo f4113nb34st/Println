@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import core.base.NoiseDisplayCore;
 import util.Interpolation;
+import util.concurrent.ThreadPool;
 import noise.FractalNoise;
 import noise.InterpNoise;
 

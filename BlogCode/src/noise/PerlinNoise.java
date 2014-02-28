@@ -2,6 +2,8 @@ package noise;
 
 import util.FastMath;
 import util.Interpolation;
+import util.concurrent.ArrayTask;
+import util.concurrent.ThreadPool;
 
 /**
  * 
@@ -10,12 +12,20 @@ import util.Interpolation;
  * @author F4113nb34st
  *
  */
-public final class PerlinNoise extends PeriodicNoise
+public final class PerlinNoise extends PeriodicNoise implements MultiThreadedNoise
 {
 	/**
 	 * The NoiseGenerator instance for this PerlinNoise.
 	 */
 	private NoiseGenerator gen = new NoiseGenerator();
+	
+	/**
+	 * Creates a new PerlinNoise
+	 */
+	public PerlinNoise()
+	{
+		this(0, 1, 1);
+	}
 	
 	/**
 	 * Creates a new PerlinNoise with the given seed and periods.
@@ -26,6 +36,12 @@ public final class PerlinNoise extends PeriodicNoise
 	public PerlinNoise(long s, int px, int py)
 	{
 		super(s, px, py);
+	}
+	
+	@Override
+	public PeriodicNoise copy()
+	{
+		return new PerlinNoise(seed, periodX, periodY);
 	}
 	
 	@Override
@@ -130,5 +146,120 @@ public final class PerlinNoise extends PeriodicNoise
 		double val4 = val3 * value;
 		double val5 = val4 * value;
 		return (6 * val5) - (15 * val4) + (10 * val3);
+	}
+	
+	@Override
+	public void fillMultiThreaded(NoiseArray noise, ThreadPool pool)
+	{
+		//calculate the base width and height (no need to calculate more values than this in base array)
+		int baseW = (int)Math.ceil(noise.getWidth() / (double)periodX);
+		int baseH = (int)Math.ceil(noise.getHeight() / (double)periodY);
+		
+		//create our gradient map
+		double[][][] gradients = getGradientMapMT(pool, baseW, baseH, seed);
+		
+		pool.addGlobalTask(new ColumnTask(noise, gradients, 0, noise.getWidth() - 1));
+		pool.startAndWait();
+	}
+	
+	/**
+	 * Task that calculates perlin noise columns.
+	 */
+	private class ColumnTask extends ArrayTask
+	{
+		private final NoiseArray noise;
+		private final double[][][] gradients;
+		
+		private ColumnTask(NoiseArray array, double[][][] grads, int min, int max)
+		{
+			super(min, max);
+			noise = array;
+			gradients = grads;
+		}
+
+		@Override
+		public void run(int x)
+		{
+			//find botX
+			int botX = x / periodX;
+			//find topX
+			int topX = (botX + 1) % gradients.length;
+			//find x fraction portion
+			double fracX = (x % (double)periodX) / periodX;
+			
+			//for all rows
+			for(int y = 0; y < noise.getHeight(); y++)
+			{
+				//find botY
+				int botY = y / periodY;
+				//find topY
+				int topY = (botY + 1) % gradients[0].length;
+				//find y fraction portion
+				double fracY = (y % (double)periodY) / periodY;
+				
+				//find values for x's and y's
+				double valBXBY = dotProduct(gradients[botX][botY], fracX, fracY);
+				double valTXBY = dotProduct(gradients[topX][botY], fracX - 1D, fracY);
+				double valBXTY = dotProduct(gradients[botX][topY], fracX, fracY - 1D);
+				double valTXTY = dotProduct(gradients[topX][topY], fracX - 1D, fracY - 1D);
+				
+				//fade fracs
+				double newFracX = fade(fracX);
+				double newFracY = fade(fracY);
+				
+				//perform y interps
+				double yBotInterp = Interpolation.LINEAR.interpolate(valBXBY, valTXBY, newFracX);
+				double yTopInterp = Interpolation.LINEAR.interpolate(valBXTY, valTXTY, newFracX);
+				
+				//set value
+				noise.setRelative(x, y, Interpolation.LINEAR.interpolate(yBotInterp, yTopInterp, newFracY));
+			}
+		}
+	}
+	
+	/**
+	 * Generates a gradient map using a thread pool from the given width, height and seed.
+	 * @param width The width of the gradient map.
+	 * @param height The height of the gradient map.
+	 * @param seed The seed to seed map with.
+	 * @return The resulting gradient map.
+	 */
+	private double[][][] getGradientMapMT(ThreadPool pool, int width, int height, long seed)
+	{
+		//create the map
+		double[][][] gradients = new double[width][height][2];
+		
+		pool.addGlobalTask(new GradientColumnTask(gradients, 0, gradients.length));
+		pool.startAndWait();
+
+		//return map
+		return gradients;
+	}
+	
+	/**
+	 * Task that calculates gradient map columns.
+	 */
+	private class GradientColumnTask extends ArrayTask
+	{
+		private final double[][][] gradients;
+		
+		private GradientColumnTask(double[][][] grads, int min, int max)
+		{
+			super(min, max);
+			gradients = grads;
+		}
+
+		@Override
+		public void run(int i)
+		{
+			for(int j = 0; j < gradients[0].length; j++)
+			{
+				//get random angle for this point
+				double angle = gen.noise_gen(seed, i, j) * Math.PI * 2;
+				//set x and y
+				gradients[i][j][0] = FastMath.cos(angle);
+				gradients[i][j][1] = FastMath.sin(angle);
+			}
+		}
 	}
 }
