@@ -14,10 +14,14 @@ import util.concurrent.ThreadPool;
  */
 public final class LookupPerlinNoise extends PeriodicNoise implements MultiThreadedNoise
 {
+	/**
+	 * Array of 16 unit directions.
+	 */
 	private static final double[][] gradients = new double[16][2];
 	private static final int gradMask = gradients.length - 1;
 	static
 	{
+		//populate the gradient array
 		double theta = 0;
 		double inc = Math.PI * 2 / gradients.length;
 		for(int index = 0; index < gradients.length; index++, theta += inc)
@@ -59,7 +63,8 @@ public final class LookupPerlinNoise extends PeriodicNoise implements MultiThrea
 	@Override
 	public void fillArray(NoiseArray noise)
 	{
-		int[] permutation = new int[64];
+		//generate the permutation table (array of 0-127 shuffled)
+		int[] permutation = new int[128];
 		int permMask = permutation.length - 1;
 		for(int i = 0; i < permutation.length; i++)
 		{
@@ -144,7 +149,8 @@ public final class LookupPerlinNoise extends PeriodicNoise implements MultiThrea
 	@Override
 	public void fillMultiThreaded(NoiseArray noise, ThreadPool pool)
 	{
-		int[] permutation = new int[64];
+		//generate the permutation table (array of 0-127 shuffled)
+		int[] permutation = new int[128];
 		for(int i = 0; i < permutation.length; i++)
 		{
 			permutation[i] = i;
